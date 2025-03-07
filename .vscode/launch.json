@@ -10,7 +10,6 @@
       "cwd": "${fileDirname}",
       "environment": [],
       "externalConsole": false,
-
       "MIMode": "gdb",
       "setupCommands": [
         {

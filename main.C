@@ -11,7 +11,7 @@ void imprimirTabuleiro(char tabuleiro[LINHAS][COLUNAS]);
 int soltarPeca(char tabuleiro[LINHAS][COLUNAS], int coluna, char peca);
 int verificarVitoria(char tabuleiro[LINHAS][COLUNAS], char peca);
 
-int main() {
+int jogo() {
     char tabuleiro[LINHAS][COLUNAS];
     int coluna, turno = 0;
     char jogadores[2] = {'X', 'O'};
@@ -23,7 +23,7 @@ int main() {
         printf("Jogador %d (%c), escolha uma coluna (1-7): ", turno + 1, jogadores[turno]);
         scanf("%d", &coluna);
 
-        if (coluna <= 0 || coluna >= COLUNAS || !soltarPeca(tabuleiro, coluna, jogadores[turno])) {
+        if (coluna <= 0 || coluna > COLUNAS || !soltarPeca(tabuleiro, coluna, jogadores[turno])) {
             printf("Movimento inválido, tente novamente.\n");
             continue;
         }
@@ -40,6 +40,17 @@ int main() {
     return 0;
 }
 
+int regras(){
+    printf("\n\n\n");
+    printf("Regras do jogo quatro em linha: \n");
+    printf("O jogo é jogado num tabuleiro vertical composto por 6 linhas e 7 colunas. \n");
+    printf("Cada jogador tem uma peça, que pode ser X ou O. \n");
+    printf("Os jogadores jogam alternadamente, uma peça de cada vez. \n");
+    printf("O objetivo do jogo é alinhar 4 peças da mesma cor, horizontal, vertical ou diagonalmente. \n");
+    printf("O jogo termina quando um dos jogadores alinha 4 peças da mesma cor ou quando o tabuleiro fica cheio. \n");
+    printf("Boa sorte! \n");
+    return 1;
+}
 
 void inicializarTabuleiro(char tabuleiro[LINHAS][COLUNAS]) {
     for (int i = 0; i < LINHAS; i++)
@@ -62,8 +73,8 @@ void imprimirTabuleiro(char tabuleiro[LINHAS][COLUNAS]) {
 
 int soltarPeca(char tabuleiro[LINHAS][COLUNAS], int coluna, char peca) {
     for (int i = LINHAS - 1; i >= 0; i--) {
-        if (tabuleiro[i][coluna] == VAZIO) {
-            tabuleiro[i][coluna] = peca;
+        if (tabuleiro[i][coluna - 1] == VAZIO) {
+            tabuleiro[i][coluna - 1] = peca;
             return 1;
         }
     }
@@ -89,3 +100,33 @@ int verificarVitoria(char tabuleiro[LINHAS][COLUNAS], char peca) {
         }
     return 0;
 }
+
+int menu(int a){
+    switch (a){
+        case 1:
+            jogo();
+            break;
+        case 2:
+            regras();
+            break;
+        case 9:
+            exit(0);
+            break;
+        default:
+            printf("Opção inválida, tente novamente.\n");
+            break;
+    }
+    return 0;
+}
+
+int main(){
+    int escomenu;
+    printf("Bem vindo ao menu do jogo quatro em linha \n\n");
+    printf("1 - Jogar \n");
+    printf("2 - Regras \n");
+    printf("9 - Sair \n");
+    
+    printf("Introduza uma opção: ");
+    scanf("%d", &escomenu);
+    menu(escomenu);
+    }
