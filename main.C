@@ -51,7 +51,7 @@ int jogo() {
             switch (resposta)
             {
             case 1:
-                menujogo();
+                jogo();
                 break;
             case 2:
                 menu();
@@ -67,6 +67,57 @@ int jogo() {
     }
     return 0;
 }
+int aijogo(){
+    char tabuleiro[LINHAS][COLUNAS];
+    int turnojg = 0;
+    printf("Bem vindo ao jogo quatro em linha contra o computador\n");
+    printf("Quer jogar primeiro? (1 = Sim [X] ; 2 = Não [O]): ");
+    scanf("%d", &turnojg);
+    int coluna, turno = 0;
+    char jogadores[1] = {'X'};
+
+    inicializarTabuleiro(tabuleiro);
+
+    while (1) {
+        imprimirTabuleiro(tabuleiro);
+        if(turno = turnojg-1){
+            printf("\n Jogador %d (%c), escolha uma coluna (1-7): ", turno + 1, jogadores[turno]);
+            scanf("%d", &coluna);
+        }else{
+            jogadaai();
+        }
+
+        if (coluna <= 0 || coluna > COLUNAS || !soltarPeca(tabuleiro, coluna, jogadores[turno])) {
+            printf("Movimento inválido, tente novamente.\n");
+            continue;
+        }
+
+        if (verificarVitoria(tabuleiro, jogadores[turno])) {
+            int resposta;
+            imprimirTabuleiro(tabuleiro);
+            
+            printf("\n Jogador %d (%c) venceu!\n", turno + 1, jogadores[turno]);
+            printf("\n\n\n Quer jogar novamente (1 = Sim ; 2 = Não): ");
+            scanf("%d", &resposta);
+            switch (resposta)
+            {
+            case 1:
+                aijogo();
+                break;
+            case 2:
+                menu();
+                break;
+            default:
+                printf("Opção inválida, tente novamente.\n");
+                break;
+            }
+    
+        }
+        turno = 1 - turno;
+    }
+    return 0;
+}
+
 
 int regras(){
     clear();
@@ -159,6 +210,9 @@ int menu(){
             break;
     }
     return 0;
+}
+int jogadaai(){
+    
 }
 int menujogo(){
     clear();

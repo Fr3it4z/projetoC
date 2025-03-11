@@ -1,6 +1,5 @@
 {
-  "files.associations": {
-    "main.C": "cpp",
-    "funcoes.c": "cpp"
-  }
+    "files.associations": {
+        "main.C": "cpp"
+    }
 }
