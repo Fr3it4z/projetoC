@@ -11,6 +11,11 @@ void inicializarTabuleiro(char tabuleiro[LINHAS][COLUNAS]);
 void imprimirTabuleiro(char tabuleiro[LINHAS][COLUNAS]);
 int soltarPeca(char tabuleiro[LINHAS][COLUNAS], int coluna, char peca);
 int verificarVitoria(char tabuleiro[LINHAS][COLUNAS], char peca);
+int jogadaai(char tabuleiro[LINHAS][COLUNAS], char pecaIA, char pecaJogador);
+int verificarVitoria(char tabuleiro[LINHAS][COLUNAS], char peca);
+int encontrarJogadaVitoria(char tabuleiro[LINHAS][COLUNAS], char peca);
+int bloquearJogador(char tabuleiro[LINHAS][COLUNAS], char pecaJogador);
+int jogadaAleatoria();
 void clear() {
     #ifdef _WIN32
         system("cls");
@@ -68,35 +73,40 @@ int jogo() {
     return 0;
 }
 int aijogo(){
+    clear();
     char tabuleiro[LINHAS][COLUNAS];
     int turnojg = 0;
-    printf("Bem vindo ao jogo quatro em linha contra o computador\n");
+    printf("Bem vindo");
+    printf("\n Jogador do ao jogo quatro em linha contra o computador\n");
     printf("Quer jogar primeiro? (1 = Sim [X] ; 2 = Não [O]): ");
     scanf("%d", &turnojg);
     int coluna, turno = 0;
-    char jogadores[1] = {'X'};
+    char jogadores[2] = {'X', 'O'};
 
     inicializarTabuleiro(tabuleiro);
 
     while (1) {
         imprimirTabuleiro(tabuleiro);
-        if(turno = turnojg-1){
+        if(turno == turnojg-1){
             printf("\n Jogador %d (%c), escolha uma coluna (1-7): ", turno + 1, jogadores[turno]);
             scanf("%d", &coluna);
-        }else{
-            jogadaai();
-        }
 
-        if (coluna <= 0 || coluna > COLUNAS || !soltarPeca(tabuleiro, coluna, jogadores[turno])) {
-            printf("Movimento inválido, tente novamente.\n");
-            continue;
+            if (coluna <= 0 || coluna > COLUNAS || !soltarPeca(tabuleiro, coluna, jogadores[turno])) {
+                printf("Movimento inválido, tente novamente.\n");
+                continue;
+            }
+        }else{
+            coluna = jogadaai(tabuleiro, jogadores[turno], jogadores[turnojg-1]);
+            soltarPeca(tabuleiro, coluna, jogadores[turno]);
+            space();
         }
 
         if (verificarVitoria(tabuleiro, jogadores[turno])) {
             int resposta;
             imprimirTabuleiro(tabuleiro);
             
-            printf("\n Jogador %d (%c) venceu!\n", turno + 1, jogadores[turno]);
+            if(turno == turnojg-1){printf("\n O Jogador venceu!\n");}
+            else{printf("\n O Computador venceu!\n");}
             printf("\n\n\n Quer jogar novamente (1 = Sim ; 2 = Não): ");
             scanf("%d", &resposta);
             switch (resposta)
@@ -109,6 +119,8 @@ int aijogo(){
                 break;
             default:
                 printf("Opção inválida, tente novamente.\n");
+                space();
+                menu();
                 break;
             }
     
@@ -192,6 +204,7 @@ int menu(){
     printf("Bem vindo ao menu do jogo quatro em linha \n\n");
     printf("1 - Jogar \n");
     printf("2 - Regras \n");
+    printf("3 - Tabela de rankings \n");
     printf("9 - Sair \n");
     printf("Introduza uma opção: ");
     scanf("%d", &escomenu);
@@ -211,8 +224,53 @@ int menu(){
     }
     return 0;
 }
-int jogadaai(){
+int jogadaai(char tabuleiro[LINHAS][COLUNAS], char pecaIA, char pecaJogador) {
+    int coluna;
     
+    // 1. Verificar se a IA pode ganhar
+    coluna = encontrarJogadaVitoria(tabuleiro, pecaIA);
+    if (coluna != -1) {
+        return coluna;
+    }
+    
+    // 2. Bloquear o jogador se estiver prestes a ganhar
+    coluna = encontrarJogadaVitoria(tabuleiro, pecaJogador);
+    if (coluna != -1) {
+        return coluna;
+    }
+    
+    // 3. Escolher uma jogada aleatória válida
+    do {
+        coluna = jogadaAleatoria();
+    } while (tabuleiro[0][coluna - 1] != VAZIO);  // Verifica se a coluna não está cheia
+    
+    return coluna;
+}
+
+int encontrarJogadaVitoria(char tabuleiro[LINHAS][COLUNAS], char peca) {
+    for (int j = 0; j < COLUNAS; j++) {
+        for (int i = LINHAS - 1; i >= 0; i--) {
+            if (tabuleiro[i][j] == VAZIO) {  // Testa colocando temporariamente a peça
+                tabuleiro[i][j] = peca;
+                if (verificarVitoria(tabuleiro, peca)) {
+                    tabuleiro[i][j] = VAZIO; // Reverte o teste
+                    return j + 1;
+                }
+                tabuleiro[i][j] = VAZIO;  // Reverte o teste
+                break;
+            }
+        }
+    }
+    return -1;
+}
+
+
+int bloquearJogador(char tabuleiro[LINHAS][COLUNAS], char pecaJogador) {
+    return encontrarJogadaVitoria(tabuleiro, pecaJogador);
+}
+
+int jogadaAleatoria() {
+    return (rand() % COLUNAS) + 1;
 }
 int menujogo(){
     clear();
@@ -228,7 +286,7 @@ int menujogo(){
             jogo();
             break;
         case 2:
-            regras();
+            aijogo();
             break;
         case 9:
             menu();
